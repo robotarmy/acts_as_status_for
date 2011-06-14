@@ -15,15 +15,18 @@ module ActsAsStatusFor
       end
       install_scopes
       install_methods
-      after_migrations.call(self) if @all_status_marks_exist
+      after_migrations.call(self) if @all_status_marks_exist && block_given?
     end
-
+    def log_error(state)
+      STDERR.puts "Arel could not find #{state}_at in the database - skipping installation of acts_as_status"
+    end
     def install_scopes
       on_at_events.each do |state|
         if self.arel_table["#{state}_at".to_sym] then
           scope "#{state}".to_sym, where(self.arel_table["#{state}_at".to_sym].not_eq(nil))
           scope "not_#{state}".to_sym, where(self.arel_table["#{state}_at".to_sym].eq(nil))
         else
+          log_error(state)
           @all_status_marks_exist = @all_status_marks_exist && false
         end
       end
@@ -50,6 +53,7 @@ module ActsAsStatusFor
             end
           end
         else
+          log_error(state)
           @all_status_marks_exist = @all_status_marks_exist && false
         end
       end
@@ -68,15 +72,17 @@ module ActsAsStatusFor
 
   module InstanceMethods
 
-    def status=(event)
-      case event
+    def status=(event_string)
+      case event_string
       when ''
         self.class.off_at_events.each do | event |
-          self.send("#{event}!")
+          self.send("#{event}!") if self.respond_to?("#{event}!")
         end
       else
-        if self.class.all_at_events.include?(event.to_sym)
-          self.send("#{event}!")
+        event_string.split(' ').each do | event | 
+          if self.class.all_at_events.include?(event.to_sym)
+            self.send("#{event}!") if self.respond_to?("#{event}!")
+          end
         end
       end
     end
