@@ -1,13 +1,29 @@
 require 'spec_helper'
-class Job
+
+ActiveRecord::Migration.create_table :things do |t|
+  t.datetime :on_hold_at
+  t.datetime :archived_at
+  t.datetime :featured_at
+end
+
+class Thing < ActiveRecord::Base
   include ActsAsStatusFor
-  acts_as_status_for :on_hold, :archived, :featured
+  acts_as_status_for :on_hold, :archived, :featured do
+    scope :depends_on, not_on_hold.not_archived
+  end
 end
 
 describe ActsAsStatusFor do
   subject {
-    Job.new
+    Thing.new
   }
+  
+  context "install dependent helpers" do
+    it "#depends_on" do
+      subject.class.respond_to?(:depends_on).should be_true
+    end
+  end
+
   context "#status" do
     it "defaults to ''" do
       subject.status.should == ''
