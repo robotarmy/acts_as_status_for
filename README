@@ -1,0 +1,42 @@
+ActiveRecord::Migration.create_table :things do |t|
+  t.datetime :on_hold_at
+  t.datetime :archived_at
+  t.datetime :featured_at
+end
+
+class Thing < ActiveRecord::Base
+  include ActsAsStatusFor
+  acts_as_status_for :on_hold, :archived, :featured do
+    scope :depends_on, not_on_hold.not_archived
+  end
+end
+
+----
+ Given this code you will be granted the following abilities:
+
+ status
+  => returns a string '' with marks according to what status is set
+ status=('')
+  => enforces the status set to match the status string passed in
+ archived?, on_hold?, featured?
+  => check on status of flag 
+ archived!, on_hold!, featured!
+  => turn on status & save
+ not_archived!, not_on_hold!, not_featured!
+  => turn off status & save
+ 
+ scopes :
+
+ not_archived, not_on_hold, not_featured,
+ archived    , on_hold    ' featured
+--
+
+
+ please note : you can protect your code from failing to exectue when your migrations
+ have not run yet (like on staging) but the code referencies fields about to be added
+ via a migration - by the use of a block
+
+ In the above example the block contains a reference to 'not_on_hold' - this is a scope
+ which is created by the argument to acts_as_status. :on_hold must exist in the database
+ for this block to run - and actually - if anyone of the status marks _at database attribute
+ doens't exist - the code will not install itself properly 

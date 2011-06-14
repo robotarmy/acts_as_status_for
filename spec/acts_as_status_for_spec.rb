@@ -8,23 +8,44 @@ end
 
 class Thing < ActiveRecord::Base
   include ActsAsStatusFor
-  acts_as_status_for :on_hold, :archived, :featured do
-    scope :depends_on, not_on_hold.not_archived
-  end
 end
 
 describe ActsAsStatusFor do
   subject {
     Thing.new
   }
-  
+  context "for non-existing fields" do
+    before do
+      @ran = false
+      Thing.instance_eval do
+        acts_as_status_for :happing do
+          @ran = true
+        end
+      end
+    end
+    it "does not execute block" do
+      @ran.should be_false
+    end
+  end
   context "install dependent helpers" do
+    before do
+      Thing.instance_eval do
+        acts_as_status_for :on_hold, :archived, :featured do
+          scope :depends_on, not_on_hold.not_archived
+        end
+      end
+    end
     it "#depends_on" do
       subject.class.respond_to?(:depends_on).should be_true
     end
   end
 
   context "#status" do
+    before do
+      Thing.instance_eval do
+        acts_as_status_for :on_hold, :archived, :featured
+      end
+    end
     it "defaults to ''" do
       subject.status.should == ''
     end
@@ -40,9 +61,9 @@ describe ActsAsStatusFor do
       # class finder method 
       #          => [ list of event states that belong to finder]
       #
-        :featured  => [:featured],
-        :on_hold   => [:on_hold],
-        :archived  => [:archived]
+      :featured  => [:featured],
+      :on_hold   => [:on_hold],
+      :archived  => [:archived]
     }.each do |scope,states|
       states.each do |state|
         it "can be used to set events" do
