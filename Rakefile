@@ -49,4 +49,3 @@ Rake::RDocTask.new do |rdoc|
 end
 
 require './config/environment.rb'
-ActsAsStatus::Application.load_tasks

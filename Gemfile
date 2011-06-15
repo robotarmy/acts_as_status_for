@@ -1,7 +1,7 @@
 source "http://rubygems.org"
-gem 'rails'
-gem 'sqlite3'
+gem 'activerecord'
 group :development do
+  gem 'sqlite3'
   gem "rspec", "~> 2.3.0"
   gem "bundler", "~> 1.0.0"
   gem "jeweler", "~> 1.6.1"
