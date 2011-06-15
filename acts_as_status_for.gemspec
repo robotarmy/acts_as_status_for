@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{acts_as_status_for}
-  s.version = "1.1.0"
+  s.version = "1.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Curtis Schofield"]
   s.date = %q{2011-06-14}
-  s.description = %q{TODO: longer description of your gem}
+  s.description = %q{acts as status event flag thing}
   s.email = %q{github.com@robotarmyma.de}
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
     "README",
     "Rakefile",
     "VERSION",
-    "acts_as_status_for.gemspec",
     "config/environment.rb",
     "lib/acts_as_status_for.rb",
     "spec/acts_as_status_for_spec.rb",
@@ -35,7 +34,7 @@ Gem::Specification.new do |s|
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.5.2}
-  s.summary = %q{TODO: one-line summary of your gem}
+  s.summary = %q{acts as status event flag thing}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3

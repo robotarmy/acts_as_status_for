@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "acts_as_status_for"
   gem.homepage = "http://github.com/robotarmy/acts_as_status_for"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Acts as Status For a list of events - did something occur? or not? with scoped finder?}
+  gem.description = %Q{Given a list of datetime _at attributes }
   gem.email = "github.com@robotarmyma.de"
   gem.authors = ["Curtis Schofield"]
   # dependencies defined in Gemfile
