@@ -1,9 +1,4 @@
-require 'rails/all'
-
-module ActsAsStatus
-  class Application < Rails::Application
-  end
-end
+require 'active_record'
 
 ActiveRecord::Base.establish_connection(
   :adapter => 'sqlite3',
