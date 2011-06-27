@@ -40,14 +40,49 @@ describe ActsAsStatusFor do
     end
   end
 
+  context "#current_status" do
+    it 'reveals the last status set' do
+      subject.on_hold!
+      subject.current_status.should == 'on_hold'
+    end
+
+    it 'can be wound and unwound' do
+      subject.on_hold!
+      subject.current_status.should == 'on_hold'
+      subject.archived!
+      subject.current_status.should == 'archived'
+      subject.featured!
+      subject.current_status.should == 'featured'
+      subject.not_featured!
+      subject.current_status.should == 'archived'
+      subject.not_archived!
+      subject.current_status.should == 'on_hold'
+      subject.not_on_hold!
+      subject.current_status.should == ''
+    end
+  end
+
   context "#status" do
     before do
       Thing.instance_eval do
         acts_as_status_for :on_hold, :archived, :featured
       end
     end
+
     it "defaults to ''" do
       subject.status.should == ''
+    end
+
+    it "is sorted by event time" do
+      subject.on_hold!
+      subject.status.should == 'on_hold'
+      subject.archived!
+      subject.status.should == 'archived on_hold'
+      subject.featured!
+      subject.status.should == 'featured archived on_hold'
+      subject.not_on_hold!
+      subject.on_hold!
+      subject.status.should == 'on_hold featured archived'
     end
 
     it "setting it to blank clears all states" do

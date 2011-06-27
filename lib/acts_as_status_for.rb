@@ -71,7 +71,9 @@ module ActsAsStatusFor
   end
 
   module InstanceMethods
-
+    def current_status
+      status.split(' ').first or ''
+    end
     def status=(event_string)
       case event_string
       when ''
@@ -79,7 +81,7 @@ module ActsAsStatusFor
           self.send("#{event}!") if self.respond_to?("#{event}!")
         end
       else
-        event_string.split(' ').each do | event | 
+        event_string.split(' ').each do | event |
           if self.class.all_at_events.include?(event.to_sym)
             self.send("#{event}!") if self.respond_to?("#{event}!")
           end
@@ -88,11 +90,12 @@ module ActsAsStatusFor
     end
 
     def status
-      status = []
+      status_time = {}
       self.class.on_at_events.each do | event |
-        status << event.to_s if self.send("#{event}?")
+        time = self.send("#{event}_at")
+        status_time[event] = time unless time.nil?
       end
-      status.join(' ')
+      status_time.sort { |a,b| b.last <=> a.last }.collect(&:first).join(' ')
     end
   end
 end
