@@ -41,6 +41,11 @@ describe ActsAsStatusFor do
   end
 
   context "#current_status" do
+    it 'has a setter' do
+      subject.current_status = 'on_hold'
+      subject.on_hold?.should be_true
+    end
+
     it 'reveals the last status set' do
       subject.on_hold!
       subject.current_status.should == 'on_hold'

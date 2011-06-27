@@ -74,6 +74,7 @@ module ActsAsStatusFor
     def current_status
       status.split(' ').first or ''
     end
+    
     def status=(event_string)
       case event_string
       when ''
@@ -88,7 +89,7 @@ module ActsAsStatusFor
         end
       end
     end
-
+    alias :current_status= :status=
     def status
       status_time = {}
       self.class.on_at_events.each do | event |
