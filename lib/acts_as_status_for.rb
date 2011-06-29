@@ -41,12 +41,12 @@ module ActsAsStatusFor
 
           define_method "not_#{state}!" do
             self.send("#{state}_at=".to_sym,nil)
-            self.save!
+            self.save
           end
 
           define_method "#{state}!" do
             self.send("#{state}_at=".to_sym,Time.now)
-            self.save!
+            self.save
           end
         else
           log_error(state)
