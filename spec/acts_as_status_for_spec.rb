@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 ActiveRecord::Migration.create_table :things do |t|
+  t.string   :name
   t.datetime :on_hold_at
   t.datetime :archived_at
   t.datetime :featured_at
@@ -8,11 +9,12 @@ end
 
 class Thing < ActiveRecord::Base
   include ActsAsStatusFor
+  validates_presence_of :name # ensure that this works with required fields (no ! on save)
 end
 
 describe ActsAsStatusFor do
   subject {
-    Thing.new
+    Thing.new(:name => 'required')
   }
   context "for non-existing fields" do
     before do
