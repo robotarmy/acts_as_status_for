@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{acts_as_status_for}
-  s.version = "2.0.2"
+  s.version = "2.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Curtis Schofield"]
-  s.date = %q{2011-06-28}
+  s.date = %q{2011-06-29}
   s.description = %q{Given a list of datetime _at attributes }
   s.email = %q{github.com@robotarmyma.de}
   s.extra_rdoc_files = [
