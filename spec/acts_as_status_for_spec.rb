@@ -51,6 +51,16 @@ describe ActsAsStatusFor do
       subject.current_status.should == 'on_hold'
     end
 
+    it 'can go back and forth between two events' do
+      subject.on_hold!
+      subject.current_status.should == 'on_hold'
+      subject.archived!
+      subject.current_status.should == 'archived'
+      subject.on_hold!
+      subject.current_status.should == 'on_hold'
+      subject.on_hold_at > subject.archived_at
+    end
+
     it 'can be wound and unwound' do
       subject.on_hold!
       subject.current_status.should == 'on_hold'

@@ -40,17 +40,13 @@ module ActsAsStatusFor
           end
 
           define_method "not_#{state}!" do
-            if self.__send__("#{state}?")
-              self.send("#{state}_at=".to_sym,nil)
-              self.save!
-            end
+            self.send("#{state}_at=".to_sym,nil)
+            self.save!
           end
 
           define_method "#{state}!" do
-            unless self.__send__("#{state}?")
-              self.send("#{state}_at=".to_sym,Time.now)
-              self.save!
-            end
+            self.send("#{state}_at=".to_sym,Time.now)
+            self.save!
           end
         else
           log_error(state)
