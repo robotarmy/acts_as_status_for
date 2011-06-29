@@ -109,14 +109,30 @@ describe ActsAsStatusFor do
       subject.status = ''
       subject.status.should == ''
     end
-    {
+
+    describe "audit trail is independent of scope" do
+      it "should recognize only the most recent" do
+        subject.featured_at = 3.days.ago
+        subject.on_hold_at = 1.days.ago
+        subject.archived_at = Time.now
+        subject.save
+        subject.class.archived.should     include(subject)
+        p subject.class.not_on_hold.to_sql
+        subject.class.not_on_hold.should  include(subject)
+        subject.class.on_hold.should_not  include(subject)
+        subject.class.not_featured.should include(subject)
+        subject.class.featured.should_not include(subject)
+      end
+    end
+
+    (ClassFinderMethods = {
       # class finder method 
       #          => [ list of event states that belong to finder]
       #
       :featured  => [:featured],
       :on_hold   => [:on_hold],
       :archived  => [:archived]
-    }.each do |scope,states|
+    }).each do |scope,states|
       states.each do |state|
         it "can be used to set events" do
           subject.status = state.to_s
