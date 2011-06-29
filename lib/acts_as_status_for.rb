@@ -21,10 +21,21 @@ module ActsAsStatusFor
       STDERR.puts "Arel could not find #{state}_at in the database - skipping installation of acts_as_status"
     end
     def install_scopes
-      on_at_events.each do |state|
+      on_at_events.each do | state |
         if self.arel_table["#{state}_at".to_sym] then
-          scope "#{state}".to_sym, where(self.arel_table["#{state}_at".to_sym].not_eq(nil))
-          scope "not_#{state}".to_sym, where(self.arel_table["#{state}_at".to_sym].eq(nil))
+          has_condition = self.arel_table["#{state}_at".to_sym].not_eq(nil)
+          has_not_condition = self.arel_table["#{state}_at".to_sym].eq(nil)
+          (on_at_events - [state]).each do | unstate |
+            has_condition = has_condition.and(self.arel_table["#{state}_at".to_sym].
+                                                gt(self.arel_table["#{unstate}_at".to_sym]).
+                                                or(self.arel_table["#{unstate}_at".to_sym].eq(nil)))
+            has_not_condition = has_not_condition.or(self.arel_table["#{state}_at".to_sym].
+                                                lteq(self.arel_table["#{unstate}_at".to_sym]).
+                                                and(self.arel_table["#{unstate}_at".to_sym].not_eq(nil)))
+          end
+
+          scope "#{state}".to_sym, where(has_condition)
+          scope "not_#{state}".to_sym, where(has_not_condition)
         else
           log_error(state)
           @all_status_marks_exist = @all_status_marks_exist && false
