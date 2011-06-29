@@ -117,7 +117,6 @@ describe ActsAsStatusFor do
         subject.archived_at = Time.now
         subject.save
         subject.class.archived.should     include(subject)
-        p subject.class.not_on_hold.to_sql
         subject.class.not_on_hold.should  include(subject)
         subject.class.on_hold.should_not  include(subject)
         subject.class.not_featured.should include(subject)
