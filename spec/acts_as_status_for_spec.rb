@@ -83,25 +83,25 @@ describe ActsAsStatusFor do
       subject.respond_to? :status_including_archived
     end
     it "archived" do
-      subject.status_including_archived.should_not include(subject)
+      subject.class.status_including_archived.should_not include(subject)
       subject.archived!
-      subject.status_including_archived.should include(subject)
+      subject.class.status_including_archived.should include(subject)
     end
     it "archived_and_featured" do
-      subject.status_including_archived_and_featured.should_not include(subject)
+      subject.class.status_including_archived_and_featured.should_not include(subject)
       subject.archived!
-      subject.status_including_archived_and_featured.should_not include(subject)
+      subject.class.status_including_archived_and_featured.should_not include(subject)
       subject.featured!
-      subject.status_including_archived_and_featured.should include(subject)
+      subject.class.status_including_archived_and_featured.should include(subject)
     end
     it "archived_and_featured_and_on_hold" do
-      subject.status_including_archived_and_featured_and_on_hold.should_not include(subject)
+      subject.class.status_including_archived_and_featured_and_on_hold.should_not include(subject)
       subject.archived!
-      subject.status_including_archived_and_featured_and_on_hold.should_not include(subject)
+      subject.class.status_including_archived_and_featured_and_on_hold.should_not include(subject)
       subject.featured!
-      subject.status_including_archived_and_featured_and_on_hold.should_not include(subject)
+      subject.class.status_including_archived_and_featured_and_on_hold.should_not include(subject)
       subject.on_hold!
-      subject.status_including_archived_and_featured_and_on_hold.should include(subject)
+      subject.class.status_including_archived_and_featured_and_on_hold.should include(subject)
     end
   end
   context "#status" do
