@@ -98,6 +98,35 @@ module ActsAsStatusFor
   end
 
   module InstanceMethods
+    def status_including_method(method)
+      if method =~ /status_including_(.+)/
+        $1
+      else
+        nil
+      end
+    end
+
+    def respond_to_missing?(method,include_private)
+      ! status_including_method(method).nil?
+    end
+
+    def statuses_including(status_list)
+      has_condition = self.class
+      status_list.each do |state|
+        has_condition = has_condition.where(self.class.arel_table["#{state}_at".to_sym].not_eq(nil))
+      end
+      has_condition
+    end
+
+    def method_missing(method,*rest,&block)
+      includes = status_including_method(method)
+      if not includes.blank?
+        statuses_including(includes.split('_and_'))
+      else
+        super
+      end
+    end
+
     def current_status
       status.split(' ').first or ''
     end
