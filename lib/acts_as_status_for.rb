@@ -34,9 +34,9 @@ module ActsAsStatusFor
     end
 
     def statuses_including(status_list)
-      has_condition = self.class
+      has_condition = self
       status_list.each do |state|
-        has_condition = has_condition.where(self.class.arel_table["#{state}_at".to_sym].not_eq(nil))
+        has_condition = has_condition.where(self.arel_table["#{state}_at".to_sym].not_eq(nil))
       end
       has_condition
     end
