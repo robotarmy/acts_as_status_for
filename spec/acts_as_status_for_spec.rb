@@ -115,6 +115,14 @@ describe ActsAsStatusFor do
       subject.status.should == ''
     end
 
+    it "allows negation of status using 'not_' prefix" do
+      subject.on_hold!
+      subject.archived!
+      subject.status.should == 'archived on_hold'
+      subject.status = "not_archived"
+      subject.status.should == 'on_hold'
+    end
+
     it "is sorted by event time" do
       subject.on_hold!
       subject.status.should == 'on_hold'
