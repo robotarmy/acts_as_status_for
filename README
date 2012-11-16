@@ -7,7 +7,9 @@ end
 class Thing < ActiveRecord::Base
   include ActsAsStatusFor
   acts_as_status_for :on_hold, :archived, :featured do
-    scope :depends_on, not_on_hold.not_archived
+    scope :both_not_on_hold_and_not_archived, not_on_hold.not_archived
+    # the above could also be had by using the default scope ability
+    # 'status_including_'
   end
 end
 
@@ -16,12 +18,20 @@ end
 
  status
   => returns a string '' with marks according to what status is set
+
  status=('')
   => enforces the status set to match the status string passed in
+  => ex.1 : obj.status('archived on_hold')
+  => ex.2 : obj.status('not_archived not_on_hold')
+  => ex.2 : obj.status('archived on_hold'); obj.status('not_archived'); # still on_hold
+
+
  archived?, on_hold?, featured?
   => check on status of flag 
+
  archived!, on_hold!, featured!
   => turn on status & save
+
  not_archived!, not_on_hold!, not_featured!
   => turn off status & save
  
@@ -29,6 +39,10 @@ end
 
  not_archived, not_on_hold, not_featured,
  archived    , on_hold    ' featured
+
+ status_including_ : a meta programming construct that allows you to join status flags with 'on' to build
+                    a run-time query operator.
+
 --
 
 
