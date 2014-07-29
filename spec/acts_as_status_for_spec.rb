@@ -26,7 +26,7 @@ describe ActsAsStatusFor do
       end
     end
     it "does not execute block" do
-      @ran.should be_false
+      expect(@ran).to be_falsey
     end
   end
   context "install dependent helpers" do
@@ -38,44 +38,44 @@ describe ActsAsStatusFor do
       end
     end
     it "#depends_on" do
-      subject.class.respond_to?(:depends_on).should be_true
+      expect(subject.class.respond_to?(:depends_on)).to be_truthy
     end
   end
 
   context "#current_status" do
     it 'has a setter' do
       subject.current_status = 'on_hold'
-      subject.on_hold?.should be_true
+      expect(subject.on_hold?).to be_truthy
     end
 
     it 'reveals the last status set' do
       subject.on_hold!
-      subject.current_status.should == 'on_hold'
+      expect(subject.current_status).to eq('on_hold')
     end
 
     it 'can go back and forth between two events' do
       subject.on_hold!
-      subject.current_status.should == 'on_hold'
+      expect(subject.current_status).to eq('on_hold')
       subject.archived!
-      subject.current_status.should == 'archived'
+      expect(subject.current_status).to eq('archived')
       subject.on_hold!
-      subject.current_status.should == 'on_hold'
+      expect(subject.current_status).to eq('on_hold')
       subject.on_hold_at > subject.archived_at
     end
 
     it 'can be wound and unwound' do
       subject.on_hold!
-      subject.current_status.should == 'on_hold'
+      expect(subject.current_status).to eq('on_hold')
       subject.archived!
-      subject.current_status.should == 'archived'
+      expect(subject.current_status).to eq('archived')
       subject.featured!
-      subject.current_status.should == 'featured'
+      expect(subject.current_status).to eq('featured')
       subject.not_featured!
-      subject.current_status.should == 'archived'
+      expect(subject.current_status).to eq('archived')
       subject.not_archived!
-      subject.current_status.should == 'on_hold'
+      expect(subject.current_status).to eq('on_hold')
       subject.not_on_hold!
-      subject.current_status.should == ''
+      expect(subject.current_status).to eq('')
     end
   end
   context "#status_including_" do
@@ -83,25 +83,25 @@ describe ActsAsStatusFor do
       subject.respond_to? :status_including_archived
     end
     it "archived" do
-      subject.class.status_including_archived.should_not include(subject)
+      expect(subject.class.status_including_archived).not_to include(subject)
       subject.archived!
-      subject.class.status_including_archived.should include(subject)
+      expect(subject.class.status_including_archived).to include(subject)
     end
     it "archived_and_featured" do
-      subject.class.status_including_archived_and_featured.should_not include(subject)
+      expect(subject.class.status_including_archived_and_featured).not_to include(subject)
       subject.archived!
-      subject.class.status_including_archived_and_featured.should_not include(subject)
+      expect(subject.class.status_including_archived_and_featured).not_to include(subject)
       subject.featured!
-      subject.class.status_including_archived_and_featured.should include(subject)
+      expect(subject.class.status_including_archived_and_featured).to include(subject)
     end
     it "archived_and_featured_and_on_hold" do
-      subject.class.status_including_archived_and_featured_and_on_hold.should_not include(subject)
+      expect(subject.class.status_including_archived_and_featured_and_on_hold).not_to include(subject)
       subject.archived!
-      subject.class.status_including_archived_and_featured_and_on_hold.should_not include(subject)
+      expect(subject.class.status_including_archived_and_featured_and_on_hold).not_to include(subject)
       subject.featured!
-      subject.class.status_including_archived_and_featured_and_on_hold.should_not include(subject)
+      expect(subject.class.status_including_archived_and_featured_and_on_hold).not_to include(subject)
       subject.on_hold!
-      subject.class.status_including_archived_and_featured_and_on_hold.should include(subject)
+      expect(subject.class.status_including_archived_and_featured_and_on_hold).to include(subject)
     end
   end
   context "#status" do
@@ -112,27 +112,27 @@ describe ActsAsStatusFor do
     end
 
     it "defaults to ''" do
-      subject.status.should == ''
+      expect(subject.status).to eq('')
     end
 
     it "allows negation of status using 'not_' prefix" do
       subject.on_hold!
       subject.archived!
-      subject.status.should == 'archived on_hold'
+      expect(subject.status).to eq('archived on_hold')
       subject.status = "not_archived"
-      subject.status.should == 'on_hold'
+      expect(subject.status).to eq('on_hold')
     end
 
     it "is sorted by event time" do
       subject.on_hold!
-      subject.status.should == 'on_hold'
+      expect(subject.status).to eq('on_hold')
       subject.archived!
-      subject.status.should == 'archived on_hold'
+      expect(subject.status).to eq('archived on_hold')
       subject.featured!
-      subject.status.should == 'featured archived on_hold'
+      expect(subject.status).to eq('featured archived on_hold')
       subject.not_on_hold!
       subject.on_hold!
-      subject.status.should == 'on_hold featured archived'
+      expect(subject.status).to eq('on_hold featured archived')
     end
 
     it "setting it to blank clears all states" do
@@ -140,7 +140,7 @@ describe ActsAsStatusFor do
       subject.archived!
       subject.featured!
       subject.status = ''
-      subject.status.should == ''
+      expect(subject.status).to eq('')
     end
 
     describe "audit trail is independent of scope" do
@@ -149,11 +149,11 @@ describe ActsAsStatusFor do
         subject.on_hold_at = 1.days.ago
         subject.archived_at = Time.now
         subject.save
-        subject.class.archived.should     include(subject)
-        subject.class.not_on_hold.should  include(subject)
-        subject.class.on_hold.should_not  include(subject)
-        subject.class.not_featured.should include(subject)
-        subject.class.featured.should_not include(subject)
+        expect(subject.class.archived).to     include(subject)
+        expect(subject.class.not_on_hold).to  include(subject)
+        expect(subject.class.on_hold).not_to  include(subject)
+        expect(subject.class.not_featured).to include(subject)
+        expect(subject.class.featured).not_to include(subject)
       end
     end
 
@@ -168,27 +168,27 @@ describe ActsAsStatusFor do
       states.each do |state|
         it "can be used to set events" do
           subject.status = state.to_s
-          subject.send(%%#{state}?%).should be_true
-          subject.status.should include(state.to_s)
+          expect(subject.send(%%#{state}?%)).to be_truthy
+          expect(subject.status).to include(state.to_s)
         end
 
         it "can be reversed" do
           subject.status = state.to_s
-          subject.send("#{state}?").should be_true
+          expect(subject.send("#{state}?")).to be_truthy
           subject.status = "not_" + state.to_s
-          subject.send("#{state}?").should be_false
+          expect(subject.send("#{state}?")).to be_falsey
         end
 
         it "#{state} sets state string" do
           subject.send("#{state}!")
-          subject.send("#{state}?").should be_true
-          subject.status.should include(state.to_s)
+          expect(subject.send("#{state}?")).to be_truthy
+          expect(subject.status).to include(state.to_s)
         end
 
         it "#{state} is in the scope #{scope}" do
           subject.send("#{state}!")
-          subject.send("#{state}?").should be_true
-          subject.class.send(scope).should include(subject)
+          expect(subject.send("#{state}?")).to be_truthy
+          expect(subject.class.send(scope)).to include(subject)
         end
       end
     end
