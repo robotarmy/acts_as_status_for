@@ -82,8 +82,8 @@ module ActsAsStatusFor
         if self.arel_table["#{state}_at".to_sym] then
           has_condition     = construct_have_state_arel_condition(state)
           has_not_condition = construct_not_have_state_arel_condition(state)
-          scope "#{state}".to_sym, where(has_condition)
-          scope "not_#{state}".to_sym, where(has_not_condition)
+          scope "#{state}".to_sym, lambda { where(has_condition) }
+          scope "not_#{state}".to_sym, lambda { where(has_not_condition) }
         else
           log_error(state)
           @all_status_marks_exist = @all_status_marks_exist && false
