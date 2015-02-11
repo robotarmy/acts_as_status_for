@@ -146,13 +146,31 @@ module ActsAsStatusFor
       end
     end
     alias :current_status= :status=
-      def status
-        status_time = {}
-        self.class.on_at_events.each do | event |
-          time = self.send("#{event}_at")
+
+    def status
+      status_time = {}
+      get_on_at_events.each do | event |
+        time = self.send("#{event}_at")
         status_time[event] = time unless time.nil?
-        end
-        status_time.sort { |a,b| b.last <=> a.last }.collect(&:first).join(' ')
       end
+      status_time.sort { |a,b| b.last <=> a.last }.collect(&:first).join(' ')
+    end
+
+    private
+    def get_on_at_events
+      current_klass = self.class
+      events = current_klass.on_at_events
+      while events.nil?
+        current_klass = current_klass.superclass
+        if current_klass.respond_to? :on_at_events
+          events = current_klass.on_at_events
+        else
+          puts "WARNING >> ActsAsStatusFor [ No status events found ] "
+          events = []
+          break
+        end
+      end
+      events
+    end
   end
 end
