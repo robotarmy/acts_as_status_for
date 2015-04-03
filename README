@@ -12,20 +12,19 @@ A object has a not_status if it is unset or if it is not the youngest status fie
 
 This version is meant for rails 4.x, 3.x version is availible for historical builds.
 
-ActiveRecord::Migration.create_table :things do |t|
-  t.datetime :on_hold_at
-  t.datetime :archived_at
-  t.datetime :featured_at
-end
-
-class Thing < ActiveRecord::Base
-  include ActsAsStatusFor
-  
-  
-   acts_as_status_for :on_hold, :archived, :featured
-   scope :both_not_on_hold_and_not_archived, -> { not_on_hold.not_archived }
+  ActiveRecord::Migration.create_table :things do |t|
+    t.datetime :on_hold_at
+    t.datetime :archived_at
+    t.datetime :featured_at
   end
-end
+
+  class Thing < ActiveRecord::Base
+    include ActsAsStatusFor
+  
+  
+    acts_as_status_for :on_hold, :archived, :featured
+    scope :both_not_on_hold_and_not_archived, -> { not_on_hold.not_archived }
+  end
 
 ----
  Given this code you will be granted the following abilities:
