@@ -1,3 +1,17 @@
+
+Give you objects a single status that they can exist with and history of states that they have encountered.
+
+Most recent timestamp on field is considered to be current_status
+
+A object has a not_status if it is unset or if it is not the youngest status field.
+
+
+
+
+
+
+This version is meant for rails 4.x, 3.x version is availible for historical builds.
+
 ActiveRecord::Migration.create_table :things do |t|
   t.datetime :on_hold_at
   t.datetime :archived_at
@@ -6,10 +20,10 @@ end
 
 class Thing < ActiveRecord::Base
   include ActsAsStatusFor
-  acts_as_status_for :on_hold, :archived, :featured do
-    scope :both_not_on_hold_and_not_archived, not_on_hold.not_archived
-    # the above could also be had by using the default scope ability
-    # 'status_including_'
+  
+  
+   acts_as_status_for :on_hold, :archived, :featured
+    scope :both_not_on_hold_and_not_archived, -> { not_on_hold.not_archived }
   end
 end
 
