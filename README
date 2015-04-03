@@ -23,7 +23,7 @@ class Thing < ActiveRecord::Base
   
   
    acts_as_status_for :on_hold, :archived, :featured
-    scope :both_not_on_hold_and_not_archived, -> { not_on_hold.not_archived }
+   scope :both_not_on_hold_and_not_archived, -> { not_on_hold.not_archived }
   end
 end
 
