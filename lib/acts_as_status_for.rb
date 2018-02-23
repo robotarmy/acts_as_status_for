@@ -124,19 +124,22 @@ module ActsAsStatusFor
       @on_at_events
     end
   end
-
+  class UnsupportedStatus < StandardError
+  end
   module InstanceMethods
 
     def current_status
       status.split(' ').first or ''
     end
 
-    def status=(event_string)
+    def status=(event_string, clear_status: false)
       case event_string
+      when nil
+        raise UnsupportedStatus.new("nil status") 
       when ''
         self.class.off_at_events.each do | event |
           self.send("#{event}!") if self.respond_to?("#{event}!")
-        end
+        end if clear_status == true
       else
         event_string.split(' ').each do | event |
           if self.class.all_at_events.include?(event.to_sym)
