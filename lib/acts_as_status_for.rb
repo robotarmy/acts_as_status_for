@@ -145,12 +145,12 @@ module ActsAsStatusFor
           if self.class.all_at_events.include?(event.to_sym)
             self.send("#{event}!") if self.respond_to?("#{event}!")
 					else
-					  puts "Here"
 						raise UnsupportedStatus.new("#{event} is not a status_at field")
           end
         end
       end
     end
+
     alias :current_status= :status=
     alias :statuses= :status=
 

@@ -163,6 +163,14 @@ describe ActsAsStatusFor do
         expect(subject.statuses).to eq('on_hold featured archived')
       end
 
+	    it "setting to nil raises error" do
+			  expect {
+			  subject.status = nil
+				}.to raise_error(ActsAsStatusFor::UnsupportedStatus)
+			  expect {
+			  subject.statuses = nil
+				}.to raise_error(ActsAsStatusFor::UnsupportedStatus)
+			end
       it "setting it to blank clears all states when clear_status is true" do
         subject.on_hold!
         subject.archived!
