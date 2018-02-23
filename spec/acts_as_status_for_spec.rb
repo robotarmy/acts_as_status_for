@@ -163,11 +163,11 @@ describe ActsAsStatusFor do
         expect(subject.status).to eq('on_hold featured archived')
       end
 
-      it "setting it to blank clears all states" do
+      it "setting it to blank clears all states when clear_status is true" do
         subject.on_hold!
         subject.archived!
         subject.featured!
-        subject.status = ''
+        subject.status=('',clear_status: true)
         expect(subject.status).to eq('')
       end
 
