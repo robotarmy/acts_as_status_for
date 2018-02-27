@@ -34,7 +34,7 @@ describe ActsAsStatusFor do
     before do
       Thing.instance_eval do
         acts_as_status_for :on_hold, :archived, :featured do
-          scope :depends_on, not_on_hold.not_archived
+          scope :depends_on, -> { not_on_hold.not_archived }
         end
       end
     end
@@ -105,7 +105,7 @@ describe ActsAsStatusFor do
       expect(subject.class.status_including_archived_and_featured_and_on_hold).to include(subject)
     end
   end
-  context "#status" do
+  context "#statuses" do
     context "with multi object inheritance" do
       before do
         Thing.instance_eval do
@@ -123,11 +123,11 @@ describe ActsAsStatusFor do
           ThingB.new(:name => 'required')
         }
         it "defaults to ''" do
-          expect(subject.status).to eq('')
+          expect(subject.statuses).to eq('')
         end
         it "uses superclasse status" do
           subject.on_hold!
-          expect(subject.status).to eq('on_hold')
+          expect(subject.statuses).to eq('on_hold')
         end
       end
     end
@@ -140,35 +140,43 @@ describe ActsAsStatusFor do
       end
 
       it "defaults to ''" do
-        expect(subject.status).to eq('')
+        expect(subject.statuses).to eq('')
       end
 
       it "allows negation of status using 'not_' prefix" do
         subject.on_hold!
         subject.archived!
-        expect(subject.status).to eq('archived on_hold')
-        subject.status = "not_archived"
-        expect(subject.status).to eq('on_hold')
+        expect(subject.statuses).to eq('archived on_hold')
+        subject.statuses = "not_archived"
+        expect(subject.statuses).to eq('on_hold')
       end
 
       it "is sorted by event time" do
         subject.on_hold!
-        expect(subject.status).to eq('on_hold')
+        expect(subject.statuses).to eq('on_hold')
         subject.archived!
-        expect(subject.status).to eq('archived on_hold')
+        expect(subject.statuses).to eq('archived on_hold')
         subject.featured!
-        expect(subject.status).to eq('featured archived on_hold')
+        expect(subject.statuses).to eq('featured archived on_hold')
         subject.not_on_hold!
         subject.on_hold!
-        expect(subject.status).to eq('on_hold featured archived')
+        expect(subject.statuses).to eq('on_hold featured archived')
       end
 
-      it "setting it to blank clears all states" do
+	    it "setting to nil raises error" do
+			  expect {
+			  subject.status = nil
+				}.to raise_error(ActsAsStatusFor::UnsupportedStatus)
+			  expect {
+			  subject.statuses = nil
+				}.to raise_error(ActsAsStatusFor::UnsupportedStatus)
+			end
+      it "setting it to blank clears all states when clear_status is true" do
         subject.on_hold!
         subject.archived!
         subject.featured!
-        subject.status = ''
-        expect(subject.status).to eq('')
+        subject.statuses = ''
+        expect(subject.statuses).to eq('featured archived on_hold')
       end
 
 
@@ -196,22 +204,22 @@ describe ActsAsStatusFor do
       }).each do |scope,states|
         states.each do |state|
           it "can be used to set events" do
-            subject.status = state.to_s
+            subject.statuses = state.to_s
             expect(subject.send(%%#{state}?%)).to be_truthy
-            expect(subject.status).to include(state.to_s)
+            expect(subject.statuses).to include(state.to_s)
           end
 
           it "can be reversed" do
-            subject.status = state.to_s
+            subject.statuses = state.to_s
             expect(subject.send("#{state}?")).to be_truthy
-            subject.status = "not_" + state.to_s
+            subject.statuses = "not_" + state.to_s
             expect(subject.send("#{state}?")).to be_falsey
           end
 
           it "#{state} sets state string" do
             subject.send("#{state}!")
             expect(subject.send("#{state}?")).to be_truthy
-            expect(subject.status).to include(state.to_s)
+            expect(subject.statuses).to include(state.to_s)
           end
 
           it "#{state} is in the scope #{scope}" do

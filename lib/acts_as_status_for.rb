@@ -5,9 +5,10 @@ module ActsAsStatusFor
     end
     base.extend(ClassMethods)
   end
+
   module ClassMethods
 
-    def acts_as_status_for(*status_marks,&after_migrations)
+    def acts_as_status_for(*status_marks, &after_migrations)
       @all_status_marks_exist = true
       @on_at_events  = status_marks
       @off_at_events = on_at_events.collect do | event |
@@ -17,6 +18,7 @@ module ActsAsStatusFor
       install_methods
       after_migrations.call(self) if @all_status_marks_exist && block_given?
     end
+
     def log_error(state)
       STDERR.puts "Arel could not find #{state}_at in the database - skipping installation of acts_as_status"
     end
@@ -124,30 +126,35 @@ module ActsAsStatusFor
       @on_at_events
     end
   end
-
+  class UnsupportedStatus < StandardError
+  end
   module InstanceMethods
 
-    def current_status
-      status.split(' ').first or ''
+    def status
+      statuses.split(' ').first or ''
     end
+
+    alias :current_status :status
 
     def status=(event_string)
       case event_string
-      when ''
-        self.class.off_at_events.each do | event |
-          self.send("#{event}!") if self.respond_to?("#{event}!")
-        end
+      when nil
+        raise UnsupportedStatus.new("nil status") 
       else
         event_string.split(' ').each do | event |
           if self.class.all_at_events.include?(event.to_sym)
             self.send("#{event}!") if self.respond_to?("#{event}!")
+					else
+						raise UnsupportedStatus.new("#{event} is not a status_at field")
           end
         end
       end
     end
-    alias :current_status= :status=
 
-    def status
+    alias :current_status= :status=
+    alias :statuses= :status=
+
+    def statuses
       status_time = {}
       get_on_at_events.each do | event |
         time = self.send("#{event}_at")
