@@ -53,8 +53,8 @@ This version is meant for rails 4.x, 3.x version is availible for historical bui
  not_archived, not_on_hold, not_featured,
  archived    , on_hold    ' featured
 
- status_including_ : a meta programming construct that allows you to join status flags with 'on' to build
-                    a run-time query operator.
+ status_including_ : a meta programming construct that allows you to join status flags with 'and' to build
+                    a run-time query operator. ( status_including_archived_and_on_hold )
 
 --
 
